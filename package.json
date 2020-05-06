@@ -20,6 +20,7 @@
     "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-imgcrop src/index.ts",
+    "build:docs": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "arthur": "npm run build"
   },
