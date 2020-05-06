@@ -1,4 +1,5 @@
 module.exports = {
+    publicPath: '/vue-imgcrop/',
     outputDir: 'docs',
     pages: {
         index: {
