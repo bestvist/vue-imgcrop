@@ -1,6 +1,6 @@
 {
   "name": "vue-imgcrop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "bestvist <vist.sun@gmail.com>",
   "private": false,
   "main": "/dist/vue-imgcrop.umd.min.js",
@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/bestvist/vue-imgcrop",
   "scripts": {
-    "start": "npm run serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-imgcrop src/index.ts",
     "build:docs": "vue-cli-service build",

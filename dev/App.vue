@@ -53,11 +53,13 @@ $primary: #409eff;
 
 #app {
     height: 100%;
+    padding: 50px;
     background: #f5f5f5;
+    text-align: center;
 }
 
 .content {
-    text-align: center;
+    
     .avatar {
         img {
             width: 150px;
