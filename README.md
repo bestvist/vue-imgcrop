@@ -1,6 +1,10 @@
 # vue-imgcrop
 
-A vue component for image crop. (vue 图片裁剪组件)
+![npm version](https://img.shields.io/npm/v/vue-imgcrop.svg)
+![npm downloads](https://img.shields.io/npm/dt/vue-imgcrop.svg)
+![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+
+A vue component for image crop. (Vue 图片裁剪组件)
 
 ## Demo 示例
 
@@ -43,4 +47,6 @@ npm install vue-imgcrop
 ### Options 配置项
 
 | Prop | Type | Default | Desc |
+| format | Array | ['jpg', 'png', 'bmp', 'jpeg'] | limit image format |
+| size | Number | 5 | limit image size |
 |--|--|--|--|

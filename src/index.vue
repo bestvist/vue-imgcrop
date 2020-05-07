@@ -1,167 +1,141 @@
 <template>
-    <div class="local-upload">
-        <div class="local-wrap" @drop="handleSelectFile" @dragover="e => e.preventDefault()">
-            <!-- 选择图片 -->
-            <div v-if="uploadStatus==='select'">
-                <div class="upload-select">
-                    <label class="upload-select__inner" for="imgUpload-file0">
-                        选择图片
-                        <input name="file" type="file" id="imgUpload-file0"
-                            accept="image/jpg,image/jpeg,image/png,image/bmp" @change="handleSelectFile">
-                    </label>
-                </div>
-                <p class="tip-limit">仅支持JPG、PNG，大小不超过10M</p>
-            </div>
-            <!-- 预览图片 -->
-            <div v-if="uploadStatus==='preview'" class="local-wrap__img">
-                <ImgCrop :src="imgSrc" @change="hanldeEdit"></ImgCrop>
+    <div class="upload" v-if="value">
+        <div class="upload-cover"></div>
+        <div class="upload-dialog">
+            <div class="title">图片裁剪<span class="icon-close" @click="handleClose()"></span></div>
+            <div class="upload-wrap">
+                <Upload :format="format" :size="size" @change="handleAvatar"></Upload>
+                <button class="save-btn" @click="handleSave">保存</button>
             </div>
         </div>
     </div>
 </template>
-<script lang='ts'>
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import ImgCrop from './ImgCrop.vue';
+
+<script lang="ts">
+import { Component, Prop, Model, Emit, Vue } from 'vue-property-decorator';
+import Upload from './Upload.vue';
 
 const defaultOptions = {
-    fileType: ['jpg', 'png', 'bmp', 'jpeg'],
-    fileSize: 1024 * 1024 * 10
+    format: ['jpg', 'png', 'bmp', 'jpeg'],
+    size: 5
 };
 
 @Component({
     name: 'VueImgCrop',
     components: {
-        ImgCrop
+        Upload
     }
 })
-export default class LocalUpload extends Vue {
-    @Prop({ default: () => defaultOptions }) options?: any;
-    private imgSrc = '';
-    private errorMsg = '';
-    private uploadStatus = 'select';
+export default class VueImgCrop extends Vue {
+    @Prop({ default: () => defaultOptions.format }) format?: string[];
+    @Prop({ default: () => defaultOptions.size }) size?: number;
 
-    private hanldeEdit(imgData: string) {
-        this.$emit('change', imgData);
+    private imgData = '';
+
+    @Model('input', { type: Boolean })
+    value!: boolean;
+
+    @Emit('input')
+    input(bool) {
+        return bool;
     }
 
-    // 选择图片文件
-    private handleSelectFile($event: any) {
-        $event.preventDefault();
-        let file;
-        if ($event.type === 'drop') {
-            file = $event.dataTransfer.files[0];
-        } else {
-            file = $event.target.files[0];
-        }
-        if (!file) return;
-        if (this.validFile(file)) {
-            const url = window.URL.createObjectURL(file);
-            const img = new Image();
-            img.onload = () => {
-                this.imgSrc = url;
-                this.uploadStatus = 'preview';
-            };
-            img.src = url;
-        }
+    @Emit()
+    save() {
+        return this.imgData;
     }
 
-    // 校验文件信息
-    private validFile(file: File) {
-        let valid = true;
-        this.errorMsg = '';
-        const fileType = file.name.split('.').reverse()[0];
-        if (!fileType) {
-            valid = false;
-            this.errorMsg = '上传失败\uFF0C上传文件类型无法识别';
-        }
-        if (this.options.fileType.indexOf(fileType) === -1) {
-            valid = false;
-            this.errorMsg = '上传失败\uFF0C仅支持JPG\u3001PNG格式';
-        }
-        if (this.options.fileSize <= file.size) {
-            valid = false;
-            this.errorMsg = '上传失败\uFF0C图片大小超过10M';
-        }
+    @Emit()
+    close() {
+        return false;
+    }
 
-        if (!valid) {
-            this.uploadStatus = 'error';
-            // 2s后重新选择
-            const timer = setTimeout(() => {
-                this.uploadStatus = 'select';
-                this.errorMsg = '';
-                clearTimeout(timer);
-            }, 2000);
-        }
-        return valid;
+    private handleAvatar(imgData: string) {
+        this.imgData = imgData;
+    }
+
+    private handleSave() {
+        this.save();
+        this.input(false);
+    }
+
+    private handleClose() {
+        this.input(false);
+        this.close();
     }
 }
 </script>
+
 <style lang="scss" scoped>
 $primary: #409eff;
 
-.local {
-    &-upload {
-        &::after {
-            content: '';
-            display: table;
-            clear: both;
-        }
+.upload {
+    &-cover {
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.7;
+        background-color: #000;
+    }
 
-        input[type='file'] {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 0;
-            height: 0;
-            opacity: 0;
-        }
+    &-dialog {
+        position: fixed;
+        z-index: 1002;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        width: 546px;
+        height: 500px;
+        background: #fff;
     }
 
     &-wrap {
-        width: 416px;
-        height: 310px;
-        border: 1px solid #ececec;
-        float: left;
-        background: #f5f5f5;
-
-        &__img {
-            position: relative;
-            width: 416px;
-            height: 310px;
-            margin: auto;
-            box-sizing: border-box;
-            user-select: none;
-        }
-    }
-}
-
-.upload-select {
-    margin: 117px auto 20px;
-    width: 136px;
-    height: 40px;
-    background: #fff;
-    box-shadow: 0 0 10px 0 rgba(213, 213, 213, 0.5);
-    border-radius: 2px;
-
-    &__inner {
-        display: block;
-        width: 136px;
-        height: 40px;
-        cursor: pointer;
-        line-height: 40px;
+        padding: 0 54px;
         text-align: center;
-        font-size: 14px;
-        color: $primary;
-        &:hover {
-            background: lighten($primary, 35%);
-        }
+    }
+
+    .title {
+        position: relative;
+        font-size: 20px;
+        color: #333;
+        padding: 19px 0;
+        margin: 0 30px;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    .icon-close {
+        cursor: pointer;
+        position: absolute;
+        top: 20px;
+        right: -10px;
+        display: block;
+        width: 16px;
+        height: 16px;
+        background: url('./img/icon-close.png');
     }
 }
 
-.tip-limit {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
+.save-btn {
+    margin: 27px auto 0;
+    width: 340px;
+    height: 46px;
+    line-height: 46px;
+    background: $primary;
+    border-radius: 2px;
+    font-size: 16px;
+    color: #fff;
     text-align: center;
+    border: none;
+    cursor: pointer;
+    &:hover {
+        background: darken($primary, 10%);
+    }
 }
 </style>

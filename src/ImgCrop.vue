@@ -16,8 +16,7 @@
     </div>
 </template>
 <script lang='ts'>
-import { Component, Prop, Watch, Vue } from "vue-property-decorator";
-import { nonnegative } from "@/utils";
+import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 
 const MIN_CROP_SIZE = 110;
 const DEFAULT_CROP_BOX = {
@@ -34,7 +33,7 @@ const DEFAULT_CROP_BOX = {
 export default class EditImg extends Vue {
     @Prop() src?: string;
 
-    private imgData = "";
+    private imgData = '';
     private minSize = MIN_CROP_SIZE;
 
     // 整体容器
@@ -72,19 +71,19 @@ export default class EditImg extends Vue {
 
     // 阴影遮罩块
     private coverBoxs = {
-        top: { left: "40px", width: "150px", height: "50px" },
-        right: { left: "190px", width: "200px" },
-        bottom: { top: "180px", left: "40px", width: "150px", height: "60px" },
-        left: { width: "40px" }
+        top: { left: '40px', width: '150px', height: '50px' },
+        right: { left: '190px', width: '200px' },
+        bottom: { top: '180px', left: '40px', width: '150px', height: '60px' },
+        left: { width: '40px' }
     };
 
     // 裁剪容器样式
     get wrapStyle() {
         const { wrapBox } = this;
         return {
-            width: wrapBox.width + "px",
-            height: wrapBox.height + "px",
-            marginTop: wrapBox.top + "px"
+            width: wrapBox.width + 'px',
+            height: wrapBox.height + 'px',
+            marginTop: wrapBox.top + 'px'
         };
     }
 
@@ -92,14 +91,14 @@ export default class EditImg extends Vue {
     get cropBoxStyle() {
         const { cropBox } = this;
         return {
-            top: cropBox.top + "px",
-            left: cropBox.left + "px",
-            width: cropBox.width + "px",
-            height: cropBox.height + "px"
+            top: cropBox.top + 'px',
+            left: cropBox.left + 'px',
+            width: cropBox.width + 'px',
+            height: cropBox.height + 'px'
         };
     }
 
-    @Watch("src")
+    @Watch('src')
     private onSrcChange(val: string) {
         this.start(val);
     }
@@ -133,7 +132,7 @@ export default class EditImg extends Vue {
     private setWrapPosition() {
         let x, y;
         this.$nextTick(() => {
-            const el = this.$refs["cropWrap"] as any;
+            const el = this.$refs['cropWrap'] as any;
             if (el) {
                 const rect = el.getBoundingClientRect();
                 x = rect.x || rect.left;
@@ -168,33 +167,29 @@ export default class EditImg extends Vue {
 
     // 设置阴影遮挡块
     private setCoverBox() {
+        function nonnegative(val: number) {
+            return val < 0 ? 0 : val;
+        }
+
         const { coverBoxs, cropBox, wrapBox } = this,
             { top, right, bottom, left } = coverBoxs;
-        top.left = bottom.left = left.width = cropBox.left + "px";
-        top.width = bottom.width = cropBox.width + "px";
-        top.height = cropBox.top + "px";
-        right.left = cropBox.left + cropBox.width + "px";
-        right.width =
-            nonnegative(wrapBox.width - cropBox.left - cropBox.width) + "px";
-        bottom.top = cropBox.top + cropBox.height + "px";
-        bottom.height =
-            nonnegative(wrapBox.height - cropBox.top - cropBox.height) + "px";
+        top.left = bottom.left = left.width = cropBox.left + 'px';
+        top.width = bottom.width = cropBox.width + 'px';
+        top.height = cropBox.top + 'px';
+        right.left = cropBox.left + cropBox.width + 'px';
+        right.width = nonnegative(wrapBox.width - cropBox.left - cropBox.width) + 'px';
+        bottom.top = cropBox.top + cropBox.height + 'px';
+        bottom.height = nonnegative(wrapBox.height - cropBox.top - cropBox.height) + 'px';
     }
 
     // 生成裁剪后图片
     private createImg() {
         const { cropBox, wrapBox, originImg } = this,
-            canvas = document.createElement("canvas"),
-            ctx = canvas.getContext("2d") as any;
+            canvas = document.createElement('canvas'),
+            ctx = canvas.getContext('2d') as any;
         canvas.width = cropBox.width;
         canvas.height = cropBox.height;
-        ctx.drawImage(
-            originImg,
-            -cropBox.left,
-            -cropBox.top,
-            wrapBox.width,
-            wrapBox.height
-        );
+        ctx.drawImage(originImg, -cropBox.left, -cropBox.top, wrapBox.width, wrapBox.height);
         this.imgData = canvas.toDataURL();
     }
 
@@ -224,10 +219,8 @@ export default class EditImg extends Vue {
             ey = e.screenY,
             rLeft = left - (x - ex),
             rTop = top - (y - ey);
-        cropBox.left =
-            rLeft >= 0 && rLeft <= wrapBox.width - width ? rLeft : cropBox.left;
-        cropBox.top =
-            rTop >= 0 && rTop <= wrapBox.height - height ? rTop : cropBox.top;
+        cropBox.left = rLeft >= 0 && rLeft <= wrapBox.width - width ? rLeft : cropBox.left;
+        cropBox.top = rTop >= 0 && rTop <= wrapBox.height - height ? rTop : cropBox.top;
         cropBox.x = ex;
         cropBox.y = ey;
         this.setCoverBox();
@@ -258,10 +251,7 @@ export default class EditImg extends Vue {
             rWidth = ex - wrapBox.x - left,
             rHeight = ey - wrapBox.y - top,
             size = Math.max(rWidth, rHeight);
-        if (
-            size >= minSize &&
-            size <= Math.min(wrapBox.width, wrapBox.height)
-        ) {
+        if (size >= minSize && size <= Math.min(wrapBox.width, wrapBox.height)) {
             cropBox.width = cropBox.height = Math.max(rWidth, rHeight);
             this.setCoverBox();
             this.crop();
@@ -270,7 +260,7 @@ export default class EditImg extends Vue {
 
     private crop() {
         this.createImg();
-        this.$emit("change", this.imgData);
+        this.$emit('change', this.imgData);
     }
 
     // 开始裁剪
@@ -278,7 +268,7 @@ export default class EditImg extends Vue {
         if (!src) return;
         const img = new Image();
         img.src = src;
-        img.setAttribute("crossOrigin",'Anonymous');
+        img.setAttribute('crossOrigin', 'Anonymous');
         img.onload = () => {
             this.originImg = img;
             const { scale } = this;
@@ -296,13 +286,13 @@ export default class EditImg extends Vue {
     public mounted() {
         this.start(this.src);
         // 绑定缩放拖拽事件
-        document.addEventListener("mouseup", this.zoomMoveEnd);
-        document.addEventListener("mousemove", this.zoomMove);
+        document.addEventListener('mouseup', this.zoomMoveEnd);
+        document.addEventListener('mousemove', this.zoomMove);
     }
 
     public destroyed() {
-        document.removeEventListener("mouseup", this.zoomMoveEnd);
-        document.removeEventListener("mousemove", this.zoomMove);
+        document.removeEventListener('mouseup', this.zoomMoveEnd);
+        document.removeEventListener('mousemove', this.zoomMove);
     }
 }
 </script>
