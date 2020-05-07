@@ -251,7 +251,7 @@ export default class EditImg extends Vue {
             rWidth = ex - wrapBox.x - left,
             rHeight = ey - wrapBox.y - top,
             size = Math.max(rWidth, rHeight);
-        if (size >= minSize && size <= Math.min(wrapBox.width, wrapBox.height)) {
+        if (size >= minSize && size <= Math.min(wrapBox.width - left, wrapBox.height - top)) {
             cropBox.width = cropBox.height = Math.max(rWidth, rHeight);
             this.setCoverBox();
             this.crop();
@@ -328,6 +328,7 @@ export default class EditImg extends Vue {
             height: 100%;
             border: 2px solid rgba(255, 255, 255, 0.6);
             box-sizing: border-box;
+            background: rgba(0, 0, 0, 0); // fix: ie10 无背景bug
             cursor: move;
         }
 

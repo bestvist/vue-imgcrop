@@ -1,6 +1,6 @@
 {
   "name": "vue-imgcrop",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": "bestvist <vist.sun@gmail.com>",
   "private": false,
   "main": "/dist/vue-imgcrop.umd.min.js",
